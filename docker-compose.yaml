@@ -76,7 +76,7 @@ x-airflow-common:
     - /home/ubuntu/Airflow_practice/dags:/opt/airflow/dags
     - /home/ubuntu/logs:/opt/airflow/logs
     - /home/ubuntu/config:/opt/airflow/config
-    - /home/ubuntu/plugins:/opt/airflow/plugins
+    - /home/ubuntu/Airflow_practice/plugins:/opt/airflow/plugins
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
