@@ -49,7 +49,7 @@ x-airflow-common:
   # In order to add custom dependencies or upgrade provider packages you can use your extended image.
   # Comment the image line, place your Dockerfile in the directory where you placed the docker-compose.yaml
   # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
-  image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.9.1}
+  image: airflow_custom:2.9.1_HdfsHive
   # build: .
   environment:
     &airflow-common-env
@@ -61,10 +61,10 @@ x-airflow-common:
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
     AIRFLOW__CORE__LOAD_EXAMPLES: 'true'
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
-    AIRFLOW__SMTP__SMTP__HOST: 'smtp.gmail.com'
-    AIRFLOW__SMTP__SMTP__USER: '0522hyung@gmail.com'
-    AIRFLOW__SMTP__SMTP__PASSWORD: '##SMTP_PASSWORD##'
-    AIRFLOW__SMTP__SMTP__PORT: 587
+    AIRFLOW__SMTP__SMTP_HOST: 'smtp.gmail.com'
+    AIRFLOW__SMTP__SMTP_USER: '0522hyung@gmail.com'
+    AIRFLOW__SMTP__SMTP_PASSWORD: '##SMTP_PASSWORD##'
+    AIRFLOW__SMTP__SMTP_PORT: 587
     AIRFLOW__SMTP__SMTP_MAIL_FROM: '0522hyung@gmail.com'
     # yamllint disable rule:line-length
     # Use simple http server on scheduler for health checks
@@ -80,7 +80,7 @@ x-airflow-common:
   volumes:
     - /home/ubuntu/Airflow_practice/dags:/opt/airflow/dags
     - /home/ubuntu/logs:/opt/airflow/logs
-    - /home/ubuntu/config:/opt/airflow/config
+    - /home/ubuntu/Airflow_practice/config:/opt/airflow/config
     - /home/ubuntu/Airflow_practice/plugins:/opt/airflow/plugins
     - /home/ubuntu/ingest:/opt/airflow/ingest
   user: "${AIRFLOW_UID:-50000}:0"
@@ -105,7 +105,8 @@ services:
       - 5432:5432
     networks:
       network_custom:
-        - ipv4_address: 172.31.20.135
+        ipv4_address: 172.31.20.135
+
   postgres:
     image: postgres:13
     environment:
@@ -120,6 +121,11 @@ services:
       retries: 5
       start_period: 5s
     restart: always
+    ports:
+      - 5431:5432
+    networks:
+      network_custom:
+        ipv4_address: 172.31.20.135
 
   redis:
     # Redis is limited to 7.2-bookworm due to licencing change
@@ -134,6 +140,9 @@ services:
       retries: 50
       start_period: 30s
     restart: always
+    networks:
+      network_custom:
+        ipv4_address: 172.31.20.135
 
   airflow-webserver:
     <<: *airflow-common
@@ -151,6 +160,9 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    networks:
+      network_custom:
+        ipv4_address: 172.31.20.135
 
   airflow-scheduler:
     <<: *airflow-common
@@ -166,6 +178,9 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    networks:
+      network_custom:
+        ipv4_address: 172.31.20.135
 
   airflow-worker:
     <<: *airflow-common
@@ -189,6 +204,9 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    networks:
+      network_custom:
+        ipv4_address: 172.31.20.135
 
   airflow-triggerer:
     <<: *airflow-common
@@ -206,7 +224,7 @@ services:
         condition: service_completed_successfully
     networks:
       network_custom:
-        - ipv4_address: 172.31.20.135
+        ipv4_address: 172.31.20.135
 
   airflow-init:
     <<: *airflow-common
@@ -271,6 +289,9 @@ services:
     user: "0:0"
     volumes:
       - ${AIRFLOW_PROJ_DIR:-.}:/sources
+    networks:
+      network_custom:
+        ipv4_address: 172.31.20.135
 
   airflow-cli:
     <<: *airflow-common
@@ -308,7 +329,7 @@ services:
         condition: service_completed_successfully
     networks:
       network_custom:
-        - ipv4_address: 172.31.20.135
+        ipv4_address: 172.31.20.135
 
 volumes:
   postgres-db-volume:
