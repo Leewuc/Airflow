@@ -121,11 +121,7 @@ services:
       retries: 5
       start_period: 5s
     restart: always
-    ports:
-      - 5431:5432
-    networks:
-      network_custom:
-        ipv4_address: 172.31.20.135
+
 
   redis:
     # Redis is limited to 7.2-bookworm due to licencing change
@@ -140,9 +136,6 @@ services:
       retries: 50
       start_period: 30s
     restart: always
-    networks:
-      network_custom:
-        ipv4_address: 172.31.20.135
 
   airflow-webserver:
     <<: *airflow-common
@@ -160,9 +153,6 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
-    networks:
-      network_custom:
-        ipv4_address: 172.31.20.135
 
   airflow-scheduler:
     <<: *airflow-common
@@ -178,9 +168,6 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
-    networks:
-      network_custom:
-        ipv4_address: 172.31.20.135
 
   airflow-worker:
     <<: *airflow-common
@@ -204,9 +191,6 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
-    networks:
-      network_custom:
-        ipv4_address: 172.31.20.135
 
   airflow-triggerer:
     <<: *airflow-common
@@ -222,9 +206,6 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
-    networks:
-      network_custom:
-        ipv4_address: 172.31.20.135
 
   airflow-init:
     <<: *airflow-common
@@ -289,9 +270,6 @@ services:
     user: "0:0"
     volumes:
       - ${AIRFLOW_PROJ_DIR:-.}:/sources
-    networks:
-      network_custom:
-        ipv4_address: 172.31.20.135
 
   airflow-cli:
     <<: *airflow-common
@@ -327,9 +305,6 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
-    networks:
-      network_custom:
-        ipv4_address: 172.31.20.135
 
 volumes:
   postgres-db-volume:
