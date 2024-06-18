@@ -5,7 +5,7 @@ import pendulum
 
 with DAG(
     dag_id='dags_trigger_dag_run_operator',
-    start_date=pendulum.datetime(2024,06,18,tz="Asia/Seoul"),
+    start_date=pendulum.datetime(2024,6,17,tz="Asia/Seoul"),
     schedule='30 9 * * *',
     catchup=False
 ) as dag:
