@@ -1,7 +1,7 @@
 from airflow import DAG
 import pendulum
 from airflow.operators.python import PythonOperator
-from plugins.common.common_func import regist2
+from common.common_func import regist2
 
 with DAG(
         dag_id="dags_python_with_op_kwargs",
