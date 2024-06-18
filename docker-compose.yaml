@@ -82,6 +82,7 @@ x-airflow-common:
     - /home/ubuntu/logs:/opt/airflow/logs
     - /home/ubuntu/config:/opt/airflow/config
     - /home/ubuntu/Airflow_practice/plugins:/opt/airflow/plugins
+    - /home/ubuntu/ingest:/opt/airflow/ingest
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
@@ -91,6 +92,20 @@ x-airflow-common:
       condition: service_healthy
 
 services:
+  postgres_custom:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: LeeU
+      POSTGRES_PASSWORD: LeeU
+      POSTGRES_DB: LeeU
+      TZ: Asia/Seoul
+    volumes:
+      - postgres-db-volume_custom:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      network_custom:
+        - ipv4_address: 172.31.20.135
   postgres:
     image: postgres:13
     environment:
@@ -291,6 +306,19 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+    networks:
+      network_custom:
+        - ipv4_address: 172.31.20.135
 
 volumes:
   postgres-db-volume:
+  postgres-db-volume_custom:
+
+networks:
+  network_custom:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.31.0.0/16
+          gateway: 172.31.0.1
